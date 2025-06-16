@@ -6,7 +6,7 @@
       "methods": ["OPTIONS"],
       "headers": {
         "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type"
       },
       "status": 204
@@ -17,7 +17,7 @@
       "headers": {
         "Access-Control-Allow-Origin": "*"
       },
-      "dest": "/api/scrape"
+      "dest": "/api/scrape.js"
     }
   ]
 }
