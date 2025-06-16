@@ -23,7 +23,7 @@
       "headers": {
         "Access-Control-Allow-Origin": "*"
       },
-      "dest": "/api/scrape"
+      "dest": "/api/scrape.js"
     }
   ]
 }
