@@ -1,15 +1,14 @@
-// /api/scrape.js (versão 4, simplificada para usar com vercel.json)
+// /api/scrape.js (versão 5, final - sem a biblioteca cors)
 
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const cors = require('cors'); // Importamos a biblioteca novamente
 
 const app = express();
 
-// Usamos a configuração padrão da biblioteca `cors`.
-// O arquivo vercel.json cuidará das permissões específicas.
-app.use(cors());
+// A biblioteca e a configuração do CORS foram REMOVIDAS daqui.
+// O arquivo vercel.json agora é o único responsável por isso.
+
 app.use(express.json());
 
 // A rota continua a mesma
