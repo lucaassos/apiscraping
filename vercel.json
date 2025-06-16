@@ -1,11 +1,5 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "api/scrape.js",
-      "use": "@vercel/node"
-    }
-  ],
   "routes": [
     {
       "src": "/api/scrape",
@@ -23,7 +17,7 @@
       "headers": {
         "Access-Control-Allow-Origin": "*"
       },
-      "dest": "/api/scrape.js"
+      "dest": "/api/scrape"
     }
   ]
 }
