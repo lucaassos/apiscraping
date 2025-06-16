@@ -1,19 +1,15 @@
-// /api/scrape.js (versão final, sem código de CORS)
+// /api/scrape.js (versão de depuração)
 
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 const app = express();
-
-// O código de CORS foi completamente removido.
-// O arquivo vercel.json agora é o único responsável por gerenciar as permissões.
-
 app.use(express.json());
 
-// A rota para o scraping
 app.post('/', async (req, res) => {
     const { url } = req.body;
+    console.log(`[LOG] Iniciando scraping para a URL: ${url}`);
 
     if (!url) {
         return res.status(400).json({ error: 'URL do imóvel é obrigatória.' });
@@ -26,22 +22,36 @@ app.post('/', async (req, res) => {
             }
         });
         const html = response.data;
+        console.log('[LOG] HTML da página baixado com sucesso.');
+
         const $ = cheerio.load(html);
+        console.log('[LOG] Cheerio carregado com o HTML.');
 
         const title = $('.title h1').text().trim();
+        console.log(`[LOG] Título extraído: "${title}"`);
+
         const location = $('.title p').text().trim();
+        console.log(`[LOG] Localização extraída: "${location}"`);
+
         const price = $('.price h2').text().trim();
+        console.log(`[LOG] Preço extraído: "${price}"`);
+        
         const description = $('.description p').text().trim();
+        console.log(`[LOG] Descrição extraída: "${description.substring(0, 50)}..."`);
+        
         const features = [];
         $('.features .feature-item').each((i, el) => {
             const featureText = $(el).find('span').last().text().trim();
             if(featureText) features.push(featureText);
         });
+        console.log(`[LOG] Features principais extraídas: ${features.join(', ')}`);
+
         const characteristics = [];
         $('.characteristics ul li').each((i, el) => {
             const charText = $(el).text().trim();
             if(charText) characteristics.push(charText);
         });
+        console.log(`[LOG] Características gerais extraídas: ${characteristics.join(', ')}`);
         
         const propertyData = {
           title,
@@ -51,12 +61,17 @@ app.post('/', async (req, res) => {
           mainFeatures: features,
           allFeatures: characteristics
         };
-
-        res.json(propertyData);
+        
+        console.log('[LOG] Scraping concluído com sucesso. Enviando dados.');
+        return res.status(200).json(propertyData);
 
     } catch (error) {
-        console.error('Erro ao fazer scraping:', error.message);
-        res.status(500).json({ error: 'Falha ao extrair dados do imóvel.' });
+        // Agora, retornamos um erro em JSON, que a interface consegue entender.
+        console.error('[ERRO] Ocorreu uma falha durante o scraping:', error);
+        return res.status(500).json({ 
+            error: 'Falha no servidor durante o scraping.', 
+            details: error.message 
+        });
     }
 });
 
