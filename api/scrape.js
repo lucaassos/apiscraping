@@ -1,24 +1,17 @@
-// /api/scrape.js (versão 6, com cors() e um manipulador OPTIONS explícito)
+// /api/scrape.js (versão final, sem código de CORS)
 
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
-const cors = require('cors'); // Vamos usar a biblioteca novamente
 
 const app = express();
 
-// 1. Configuração do CORS para ser o mais permissivo possível para diagnóstico.
-//    Isso diz "qualquer um pode me acessar".
-app.use(cors());
+// O código de CORS foi completamente removido.
+// O arquivo vercel.json agora é o único responsável por gerenciar as permissões.
 
-// 2. Manipulador explícito para a requisição de preflight (OPTIONS).
-//    Isso força uma resposta "OK" (200) para o pedido de permissão do navegador.
-app.options('*', cors());
-
-// 3. Habilita o parsing de JSON para as requisições POST.
 app.use(express.json());
 
-// A rota principal para o scraping
+// A rota para o scraping
 app.post('/', async (req, res) => {
     const { url } = req.body;
 
