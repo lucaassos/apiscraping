@@ -1,10 +1,7 @@
 {
-  "name": "apiscraping",
+  "name": "vista-api-proxy",
   "version": "1.0.0",
-  "description": "Scraper para propostas de imóveis",
-  "main": "api/scrape.js",
   "dependencies": {
-    "axios": "^1.6.8",
-    "cheerio": "^1.0.0-rc.12"
+    "axios": "^1.6.8"
   }
 }
