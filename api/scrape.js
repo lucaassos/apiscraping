@@ -1,36 +1,15 @@
-// /api/scrape.js (versão 3, com headers manuais para CORS)
+// /api/scrape.js (versão 4, simplificada para usar com vercel.json)
 
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const cors = require('cors'); // Importamos a biblioteca novamente
 
 const app = express();
 
-// --- CORREÇÃO DE CORS (TENTATIVA 3 - Manual) ---
-// Em vez de usar a biblioteca `cors`, vamos definir os headers manualmente.
-// Isso nos dá controle total e pode resolver problemas de configuração na Vercel.
-app.use((req, res, next) => {
-  // Permite que qualquer domínio acesse este backend. Depois de funcionar,
-  // podemos trocar '*' por 'https://lucaassos.github.io'.
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  
-  // Define os métodos HTTP permitidos na comunicação.
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  
-  // Define os cabeçalhos que o navegador pode enviar na requisição.
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // O navegador envia uma requisição 'OPTIONS' primeiro (preflight check).
-  // Se o método da requisição for 'OPTIONS', nós simplesmente respondemos 'OK' (200),
-  // o que sinaliza ao navegador que a requisição POST seguinte é permitida.
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(200);
-  }
-
-  // Se não for uma requisição OPTIONS, continua para a nossa rota normal.
-  next();
-});
-
+// Usamos a configuração padrão da biblioteca `cors`.
+// O arquivo vercel.json cuidará das permissões específicas.
+app.use(cors());
 app.use(express.json());
 
 // A rota continua a mesma
