@@ -1,14 +1,22 @@
 {
   "version": 2,
-  "headers": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "headers": [
-        { "key": "Access-Control-Allow-Credentials", "value": "true" },
-        { "key": "Access-Control-Allow-Origin", "value": "https://lucaassos.github.io" },
-        { "key": "Access-Control-Allow-Methods", "value": "GET,OPTIONS,PATCH,DELETE,POST,PUT" },
-        { "key": "Access-Control-Allow-Headers", "value": "X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version" }
-      ]
+      "src": "/api/scrape",
+      "methods": ["OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Methods": "POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type",
+        "Access-Control-Allow-Origin": "https://lucaassos.github.io"
+      },
+      "dest": "/api/scrape"
+    },
+    {
+      "src": "/api/scrape",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://lucaassos.github.io"
+      },
+      "dest": "/api/scrape"
     }
   ]
 }
