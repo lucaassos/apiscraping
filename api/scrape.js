@@ -1,23 +1,40 @@
-// /api/scrape.js (versão de diagnóstico para o erro de CORS)
+// /api/scrape.js (versão 3, com headers manuais para CORS)
 
 const express = require('express');
 const axios = require('axios');
-const cheerio =require('cheerio');
-const cors = require('cors');
+const cheerio = require('cheerio');
 
 const app = express();
 
-// --- CORREÇÃO DE CORS (TENTATIVA 2) ---
-// Temporariamente permitindo requisições de QUALQUER origem para diagnóstico.
-// Se isso funcionar, vamos restringir novamente para o seu domínio específico.
-app.use(cors());
+// --- CORREÇÃO DE CORS (TENTATIVA 3 - Manual) ---
+// Em vez de usar a biblioteca `cors`, vamos definir os headers manualmente.
+// Isso nos dá controle total e pode resolver problemas de configuração na Vercel.
+app.use((req, res, next) => {
+  // Permite que qualquer domínio acesse este backend. Depois de funcionar,
+  // podemos trocar '*' por 'https://lucaassos.github.io'.
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  
+  // Define os métodos HTTP permitidos na comunicação.
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  
+  // Define os cabeçalhos que o navegador pode enviar na requisição.
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // O navegador envia uma requisição 'OPTIONS' primeiro (preflight check).
+  // Se o método da requisição for 'OPTIONS', nós simplesmente respondemos 'OK' (200),
+  // o que sinaliza ao navegador que a requisição POST seguinte é permitida.
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+
+  // Se não for uma requisição OPTIONS, continua para a nossa rota normal.
+  next();
+});
 
 app.use(express.json());
 
 // A rota continua a mesma
 app.post('/', async (req, res) => {
-    // Para Vercel, o caminho completo da requisição será /api/scrape,
-    // então a rota no Express deve ser '/'.
     const { url } = req.body;
 
     if (!url) {
