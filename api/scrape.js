@@ -1,26 +1,30 @@
-// /api/scrape.js (versão final, nativa da Vercel, sem Express)
+// /api/scrape.js (versão final, tudo-em-um, sem vercel.json)
 
 const axios = require('axios');
 const cheerio = require('cheerio');
 
 // Esta é a função principal que a Vercel irá rodar.
-// Ela não usa Express, lidando diretamente com a requisição (req) e a resposta (res).
 module.exports = async (req, res) => {
-    // --- Configuração Manual de CORS ---
-    // Definimos as permissões aqui para garantir que elas sejam aplicadas.
+    // Adicionamos um log no início absoluto da função para garantir que ela seja chamada.
+    console.log(`[LOG] Função /api/scrape foi invocada. Método: ${req.method}`);
+
+    // --- Configuração de CORS diretamente na função ---
+    // Isso garante que a Vercel envie os cabeçalhos corretos na resposta.
     res.setHeader('Access-Control-Allow-Origin', 'https://lucaassos.github.io');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-    // Se o navegador fizer o "pedido de permissão" (OPTIONS), respondemos OK e paramos.
+    // Se o navegador enviar o "pedido de permissão" (OPTIONS), respondemos OK e paramos aqui.
     if (req.method === 'OPTIONS') {
+        console.log('[LOG] Requisição OPTIONS recebida. Respondendo com status 200.');
         return res.status(200).end();
     }
     
     // --- Lógica de Scraping ---
     try {
-        // Garantimos que a requisição é do tipo POST
+        // Garantimos que a requisição é do tipo POST para a lógica principal
         if (req.method !== 'POST') {
+            console.log(`[AVISO] Método ${req.method} não é POST. Ignorando.`);
             return res.status(405).json({ error: 'Método não permitido. Use POST.' });
         }
 
@@ -37,7 +41,6 @@ module.exports = async (req, res) => {
             }
         });
         const html = response.data;
-        console.log('[LOG] HTML da página baixado com sucesso.');
         
         const $ = cheerio.load(html);
 
@@ -67,13 +70,11 @@ module.exports = async (req, res) => {
           allFeatures: characteristics
         };
         
-        console.log('[LOG] Scraping concluído com sucesso. Enviando dados.');
-        // Retorna os dados com status 200 (OK)
+        console.log('[LOG] Scraping concluído com sucesso.');
         return res.status(200).json(propertyData);
 
     } catch (error) {
-        console.error('[ERRO] Ocorreu uma falha durante o scraping:', error.message);
-        // Retorna um erro em formato JSON
+        console.error('[ERRO] Falha durante o scraping:', error.message);
         return res.status(500).json({ 
             error: 'Falha no servidor durante o scraping.', 
             details: error.message 
